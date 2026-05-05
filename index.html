@@ -333,6 +333,11 @@ tbody tr:hover td{background:var(--surface2);color:var(--text);}
 
 
 #the-map{width:100%;height:100%;min-height:520px;}
+
+/* ── CHART SIZE LOCK ────────────────────────────────────────────────────────── */
+.card canvas{display:block;width:100% !important;box-sizing:border-box;}
+.chart-wrap{position:relative;overflow:hidden;}
+
 </style>
 </head>
 <body>
@@ -404,25 +409,25 @@ tbody tr:hover td{background:var(--surface2);color:var(--text);}
     <div class="grid-2 fu">
       <div class="card">
         <div class="card-header"><span class="card-title">Amostras por Ano</span><span class="chip chip-blue">histórico</span></div>
-        <canvas id="c-anos" height="200"></canvas>
+        <div class="chart-wrap" style="height:200px;max-height:200px;overflow:hidden;"><canvas data-h="200" style="max-height:200px;height:200px;" id="c-anos" height="200"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Distribuição de pH CaCl₂</span><span class="chip chip-teal">2.802 pts</span></div>
-        <canvas id="c-ph-dist" height="200"></canvas>
+        <div class="chart-wrap" style="height:200px;max-height:200px;overflow:hidden;"><canvas data-h="200" style="max-height:200px;height:200px;" id="c-ph-dist" height="200"></canvas></div>
       </div>
     </div>
     <div class="grid-3 fu">
       <div class="card">
         <div class="card-header"><span class="card-title">Saturação por Base V%</span></div>
-        <canvas id="c-v-dist" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-v-dist" height="180"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Fósforo P(m) — Tendência Anual</span></div>
-        <canvas id="c-p-trend" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-p-trend" height="180"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">CTC vs V% — Dispersão</span></div>
-        <canvas id="c-scatter" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-scatter" height="180"></canvas></div>
       </div>
     </div>
   </div>
@@ -454,25 +459,25 @@ tbody tr:hover td{background:var(--surface2);color:var(--text);}
     <div class="grid-2 fu">
       <div class="card">
         <div class="card-header"><span class="card-title">Top Produtores por Amostra</span></div>
-        <canvas id="c-top-prod" height="220"></canvas>
+        <div class="chart-wrap" style="height:220px;max-height:220px;overflow:hidden;"><canvas data-h="220" style="max-height:220px;height:220px;" id="c-top-prod" height="220"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">pH × V% — Correlação</span></div>
-        <canvas id="c-filt-scatter" height="220"></canvas>
+        <div class="chart-wrap" style="height:220px;max-height:220px;overflow:hidden;"><canvas data-h="220" style="max-height:220px;height:220px;" id="c-filt-scatter" height="220"></canvas></div>
       </div>
     </div>
     <div class="grid-3 fu">
       <div class="card">
         <div class="card-header"><span class="card-title">Potássio K — Distribuição</span></div>
-        <canvas id="c-k-dist" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-k-dist" height="180"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Cálcio Ca — Distribuição</span></div>
-        <canvas id="c-ca-dist" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-ca-dist" height="180"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title">Matéria Orgânica — Distribuição</span></div>
-        <canvas id="c-mo-dist" height="180"></canvas>
+        <div class="chart-wrap" style="height:180px;max-height:180px;overflow:hidden;"><canvas data-h="180" style="max-height:180px;height:180px;" id="c-mo-dist" height="180"></canvas></div>
       </div>
     </div>
     <div class="card full fu">
@@ -512,7 +517,7 @@ tbody tr:hover td{background:var(--surface2);color:var(--text);}
         </div>
         <div class="card fu">
           <div class="card-header"><span class="card-title">Comparação de Média pH por Produtor (Top 10)</span></div>
-          <canvas id="c-prod-pH" height="220"></canvas>
+          <div class="chart-wrap" style="height:220px;max-height:220px;overflow:hidden;"><canvas data-h="220" style="max-height:220px;height:220px;" id="c-prod-pH" height="220"></canvas></div>
         </div>
       </div>
     </div>
@@ -703,6 +708,9 @@ function mk(id,type,labels,datasets,opts={}){
   if(CHARTS[id])CHARTS[id].destroy();
   const ctx=document.getElementById(id);
   if(!ctx)return;
+  // Lock canvas to its declared height before creating chart
+  const h=ctx.getAttribute('data-h')||ctx.getAttribute('height')||220;
+  ctx.style.height=h+'px';ctx.style.maxHeight=h+'px';ctx.style.width='100%';
   CHARTS[id]=new Chart(ctx,{type,data:{labels,datasets},options:{
     responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:opts.legend||false,labels:{color:'#7A96B0',font:{size:10}}},
